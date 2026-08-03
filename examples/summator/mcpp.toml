@@ -1,0 +1,18 @@
+# A real GDExtension, built as the shared library Godot loads -- the shape
+# godot-cpp actually ships in. Written against `import godot_cpp;` with the
+# side header for the registration macros.
+#
+#   mcpp build
+#   # then point summator.gdextension at the produced library and drop both
+#   # into a Godot 4.5 project
+[package]
+name        = "summator"
+version     = "0.1.0"
+description = "Minimal Godot 4.5 GDExtension written with import godot_cpp;"
+license     = "MIT"
+
+[targets.summator]
+kind = "shared"
+
+[dependencies]
+godot-cpp = { path = "../.." }

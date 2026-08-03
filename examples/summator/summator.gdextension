@@ -1,0 +1,11 @@
+[configuration]
+entry_symbol = "summator_library_init"
+compatibility_minimum = "4.5"
+
+[libraries]
+linux.debug.x86_64   = "res://bin/libsummator.so"
+linux.release.x86_64 = "res://bin/libsummator.so"
+macos.debug          = "res://bin/libsummator.dylib"
+macos.release        = "res://bin/libsummator.dylib"
+windows.debug.x86_64 = "res://bin/summator.dll"
+windows.release.x86_64 = "res://bin/summator.dll"

@@ -1,0 +1,32 @@
+# godot-cpp-m -- godot-cpp as a C++23 module.
+#
+# This package is ONLY the module layer. Upstream's sources and its
+# pre-generated GDExtension bindings arrive through the compat.godot-cpp index
+# package, which compiles them (1022 TUs) as an ordinary mcpp source package.
+[package]
+name        = "godot-cpp"
+version     = "0.0.1"
+description = "godot-cpp as a C++23 module (import godot_cpp;) on top of the compat.godot-cpp source build"
+license     = "MIT"
+repo        = "https://github.com/mcpplibs/godot-cpp-m"
+platforms   = ["linux", "macos", "windows"]
+
+[targets.godot-cpp]
+kind = "lib"
+
+[build]
+sources      = ["src/**/*.cppm"]
+include_dirs = ["include"]
+# godot-cpp's headers reach the module through its global module fragment, and
+# several of their helpers are `static` (make_property_info, the hash_* family,
+# fastmod, ...). Inline/template definitions that call those are reachable from
+# the module, which GCC 16 reports as -Wexpose-global-module-tu-local -- ~3300
+# times, once per instantiation, while compiling this single interface unit.
+# The exposure is upstream's shape, not something the wrapper can express its
+# way out of, so silence the class rather than drown every build in it. Clang
+# does not have the warning and merely notes the unknown -Wno- option.
+cxxflags = ["-Wno-expose-global-module-tu-local"]
+
+[dependencies]
+# Upstream tree + pre-generated bindings + the whole source build recipe.
+compat.godot-cpp = "4.5.0"
