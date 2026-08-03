@@ -6,16 +6,24 @@
 # The version TRACKS UPSTREAM: 4.5.0 is the godot-cpp / Godot release this
 # wraps, the same version compat.godot-cpp carries. A module layer that only
 # re-exports an API has no version of its own worth inventing -- what a
-# consumer needs to know from `godot-cpp = "4.5.0"` is which Godot it targets.
+# consumer needs to know from the version is which Godot it targets.
+#
+# The NAME is `godot-cpp-m`, not `godot-cpp`, and that is load-bearing: this
+# package and its own compat.godot-cpp dependency are always resolved
+# together, and mcpp's installed-package lookup matches on (name, version)
+# without the namespace -- two packages sharing both would have this one
+# resolve to the other's unpacked directory and fail with "no mcpp.toml at
+# <verdir>/*/mcpp.toml". Distinct short names sidestep it, and `-m` matches
+# the repository name.
 [package]
-name        = "godot-cpp"
+name        = "godot-cpp-m"
 version     = "4.5.0"
 description = "godot-cpp as a C++23 module (import godot_cpp;) on top of the compat.godot-cpp source build"
 license     = "MIT"
 repo        = "https://github.com/mcpplibs/godot-cpp-m"
 platforms   = ["linux", "macos", "windows"]
 
-[targets.godot-cpp]
+[targets.godot-cpp-m]
 kind = "lib"
 
 [build]

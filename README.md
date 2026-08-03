@@ -28,7 +28,7 @@ int main() {
 
 ```toml
 [dependencies]
-godot-cpp = "4.5.0"
+godot-cpp-m = "4.5.0"
 ```
 
 The version tracks upstream: `4.5.0` is the godot-cpp release this wraps, the
