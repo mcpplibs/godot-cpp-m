@@ -3,9 +3,13 @@
 # This package is ONLY the module layer. Upstream's sources and its
 # pre-generated GDExtension bindings arrive through the compat.godot-cpp index
 # package, which compiles them (1022 TUs) as an ordinary mcpp source package.
+# The version TRACKS UPSTREAM: 4.5.0 is the godot-cpp / Godot release this
+# wraps, the same version compat.godot-cpp carries. A module layer that only
+# re-exports an API has no version of its own worth inventing -- what a
+# consumer needs to know from `godot-cpp = "4.5.0"` is which Godot it targets.
 [package]
 name        = "godot-cpp"
-version     = "0.0.1"
+version     = "4.5.0"
 description = "godot-cpp as a C++23 module (import godot_cpp;) on top of the compat.godot-cpp source build"
 license     = "MIT"
 repo        = "https://github.com/mcpplibs/godot-cpp-m"

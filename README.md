@@ -28,11 +28,12 @@ int main() {
 
 ```toml
 [dependencies]
-godot-cpp = "0.0.1"
+godot-cpp = "4.5.0"
 ```
 
-Requires Godot 4.5 (`compat.godot-cpp` 4.5.0 carries the `godot-4.5-stable`
-bindings).
+The version tracks upstream: `4.5.0` is the godot-cpp release this wraps, the
+same version `compat.godot-cpp` carries, so the number tells you which Godot
+you are targeting.
 
 ## Macros
 
