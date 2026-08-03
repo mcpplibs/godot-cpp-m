@@ -128,7 +128,14 @@ jobs:
 
       # A real GDExtension shared library -- the shape this package exists for,
       # and what caught the missing -fPIC in compat.godot-cpp.
+      #
+      # Linux only, and not by choice: mcpp refuses `kind = "shared"` off ELF --
+      # "PE consumers need an import library and Mach-O needs install-name
+      # handling; neither is modelled yet, so mcpp refuses rather than producing
+      # an artifact nothing has ever verified." The library layer itself is
+      # still built and tested on all three above.
       - name: Build the summator GDExtension example
+        if: runner.os == 'Linux'
         shell: bash
         working-directory: examples/summator
         env:
