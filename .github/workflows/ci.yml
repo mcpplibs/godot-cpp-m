@@ -14,29 +14,30 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Linux only, like the sibling module packages (ffmpeg-m, imgui-m): xlings'
+# quick_install.sh has no Windows path ("Unsupported OS: MINGW64_NT"). macOS
+# and Windows coverage for this package comes from mcpp-index, whose workspace
+# matrix runs the godot-cpp-module member on all three.
 jobs:
-  build:
-    name: mcpp (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
+  linux:
+    name: mcpp (ubuntu-latest, required)
+    runs-on: ubuntu-latest
     timeout-minutes: 90
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, macos-15, windows-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
       - name: Install Xlings
-        shell: bash
         env:
           XLINGS_NON_INTERACTIVE: 1
         run: |
           curl -fsSL https://raw.githubusercontent.com/openxlings/xlings/refs/heads/main/tools/other/quick_install.sh | bash
           echo "$HOME/.xlings/subos/current/bin" >> "$GITHUB_PATH"
 
+      # Installs the mcpp version pinned in .xlings.json -- without that file
+      # this step is a no-op and every later step dies on `mcpp: command not
+      # found`.
       - name: Install project tools
-        shell: bash
         run: |
           xlings update
           xlings install
@@ -44,7 +45,6 @@ jobs:
       # Same transition step as ffmpeg-m / imgui-m: pin the glibc gcc
       # toolchain explicitly until mcpp's bootstrap default settles.
       - name: Set default toolchain
-        shell: bash
         run: |
           mcpp toolchain install gcc 16.1.0
           mcpp toolchain default gcc@16.1.0
@@ -52,19 +52,16 @@ jobs:
 
       # Cold: compat.godot-cpp builds 1022 TUs from source underneath this.
       - name: Build the module layer
-        shell: bash
         run: mcpp build
 
-      # tests/godot_cpp_module.cpp  -- the import surface
-      # tests/godot_cpp_macros.cpp  -- GDCLASS next to the import
+      # tests/godot_cpp_module.cpp -- the import surface
+      # tests/godot_cpp_macros.cpp -- GDCLASS next to the import
       - name: Run tests
-        shell: bash
         run: mcpp test
 
       # A real GDExtension shared library -- the shape this package exists for,
       # and what caught the missing -fPIC in compat.godot-cpp.
       - name: Build the summator GDExtension example
-        shell: bash
         run: |
           cd examples/summator
           mcpp build
