@@ -15,4 +15,4 @@ license     = "MIT"
 kind = "shared"
 
 [dependencies]
-godot-cpp = { path = "../.." }
+godot-cpp-m = { path = "../.." }
