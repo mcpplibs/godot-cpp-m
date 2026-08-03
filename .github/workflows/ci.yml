@@ -14,54 +14,123 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
-# Linux only, like the sibling module packages (ffmpeg-m, imgui-m): xlings'
-# quick_install.sh has no Windows path ("Unsupported OS: MINGW64_NT"). macOS
-# and Windows coverage for this package comes from mcpp-index, whose workspace
-# matrix runs the godot-cpp-module member on all three.
+env:
+  # Keep in sync with mcpp-index's .github/workflows/validate.yml MCPP_VERSION:
+  # this package is consumed from that index, so it should be exercised with
+  # the client that index pins.
+  MCPP_VERSION: "2026.8.3.3"
+
 jobs:
-  linux:
-    name: mcpp (ubuntu-latest, required)
-    runs-on: ubuntu-latest
-    timeout-minutes: 90
+  build:
+    name: mcpp (${{ matrix.platform }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: linux
+            os: ubuntu-latest
+            suffix: linux-x86_64
+            ext: tar.gz
+            mcpp: bin/mcpp
+            xlings: registry/bin/xlings
+          - platform: macos
+            os: macos-15
+            suffix: macosx-arm64
+            ext: tar.gz
+            mcpp: bin/mcpp
+            xlings: registry/bin/xlings
+          - platform: windows
+            os: windows-latest
+            suffix: windows-x86_64
+            ext: zip
+            mcpp: bin/mcpp.exe
+            xlings: registry/bin/xlings.exe
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Xlings
+      # Holds the toolchains AND the built compat.godot-cpp (1022 TUs), so a
+      # repeat run rebuilds little. Keyed off the tracked inputs only --
+      # `git ls-files -s` reads the index, so build output can never enter the
+      # hash the way a hashFiles() glob would.
+      - name: Compute registry cache key
+        shell: bash
+        run: |
+          h=$(git ls-files -s | git hash-object --stdin)
+          echo "REGISTRY_CACHE_KEY=mcpp-registry-${{ runner.os }}-${{ env.MCPP_VERSION }}-$h" >> "$GITHUB_ENV"
+
+      - name: Restore mcpp registry cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.mcpp/registry
+          key: ${{ env.REGISTRY_CACHE_KEY }}
+          restore-keys: |
+            mcpp-registry-${{ runner.os }}-${{ env.MCPP_VERSION }}-
+
+      # Download the release directly rather than going through xlings'
+      # quick_install.sh: that installer has no Windows path at all ("[xlings]:
+      # Unsupported OS: MINGW64_NT-10.0-26100"), and pinning the archive gives
+      # the same client mcpp-index CI uses. Same steps as that workflow.
+      - name: Download mcpp
+        shell: bash
         env:
-          XLINGS_NON_INTERACTIVE: 1
+          MCPP_ARCHIVE: mcpp-${{ env.MCPP_VERSION }}-${{ matrix.suffix }}.${{ matrix.ext }}
+          MCPP_ROOT: mcpp-${{ env.MCPP_VERSION }}-${{ matrix.suffix }}
         run: |
-          curl -fsSL https://raw.githubusercontent.com/openxlings/xlings/refs/heads/main/tools/other/quick_install.sh | bash
-          echo "$HOME/.xlings/subos/current/bin" >> "$GITHUB_PATH"
+          curl -L -fsS -o "$MCPP_ARCHIVE" \
+            "https://github.com/mcpp-community/mcpp/releases/download/v${MCPP_VERSION}/${MCPP_ARCHIVE}"
+          case "$MCPP_ARCHIVE" in
+            *.zip) powershell -NoProfile -Command "Expand-Archive -Force -Path '${MCPP_ARCHIVE}' -DestinationPath '.'" ;;
+            *)     tar -xzf "$MCPP_ARCHIVE" ;;
+          esac
+          root="$PWD/$MCPP_ROOT"
+          mkdir -p "$HOME/.mcpp/registry"
+          cp -a "$root/registry/." "$HOME/.mcpp/registry/"
+          if [[ "$RUNNER_OS" == "Windows" ]]; then
+            echo "MCPP=$(cygpath -m "$root/${{ matrix.mcpp }}")" >> "$GITHUB_ENV"
+            echo "MCPP_VENDORED_XLINGS=$(cygpath -m "$root/${{ matrix.xlings }}")" >> "$GITHUB_ENV"
+            echo "$(cygpath -m "$root/bin")" >> "$GITHUB_PATH"
+          else
+            echo "MCPP=$root/${{ matrix.mcpp }}" >> "$GITHUB_ENV"
+            echo "MCPP_VENDORED_XLINGS=$root/${{ matrix.xlings }}" >> "$GITHUB_ENV"
+            echo "$root/bin" >> "$GITHUB_PATH"
+          fi
 
-      # Installs the mcpp version pinned in .xlings.json -- without that file
-      # this step is a no-op and every later step dies on `mcpp: command not
-      # found`.
-      - name: Install project tools
+      # compat.godot-cpp is newer than the index snapshot the release vendors
+      # (and than any restored cache), so refresh before resolving.
+      - name: Refresh the published package index
+        shell: bash
+        env:
+          MCPP_INDEX_MIRROR: GLOBAL
         run: |
-          xlings update
-          xlings install
+          "$MCPP" --version
+          "$MCPP" index update
 
-      # Same transition step as ffmpeg-m / imgui-m: pin the glibc gcc
-      # toolchain explicitly until mcpp's bootstrap default settles.
-      - name: Set default toolchain
-        run: |
-          mcpp toolchain install gcc 16.1.0
-          mcpp toolchain default gcc@16.1.0
-          mcpp --version
-
+      # No explicit toolchain: mcpp picks the platform default (gcc on Linux,
+      # LLVM on macOS/Windows), which is what a consumer gets and what
+      # mcpp-index CI exercises.
       # Cold: compat.godot-cpp builds 1022 TUs from source underneath this.
       - name: Build the module layer
-        run: mcpp build
+        shell: bash
+        env:
+          MCPP_INDEX_MIRROR: GLOBAL
+        run: '"$MCPP" build'
 
       # tests/godot_cpp_module.cpp -- the import surface
       # tests/godot_cpp_macros.cpp -- GDCLASS next to the import
       - name: Run tests
-        run: mcpp test
+        shell: bash
+        env:
+          MCPP_INDEX_MIRROR: GLOBAL
+        run: '"$MCPP" test'
 
       # A real GDExtension shared library -- the shape this package exists for,
       # and what caught the missing -fPIC in compat.godot-cpp.
       - name: Build the summator GDExtension example
-        run: |
-          cd examples/summator
-          mcpp build
+        shell: bash
+        working-directory: examples/summator
+        env:
+          MCPP_INDEX_MIRROR: GLOBAL
+        run: '"$MCPP" build'
