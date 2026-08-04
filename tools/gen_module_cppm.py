@@ -16,6 +16,30 @@ collects every declaration at namespace scope under `godot` (plus the nested
 -- it is the gdextension interface plumbing, reachable from the module's own
 inline/template definitions without being part of the public API).
 
+It also emits a SHIM HEADER (--shim-out). godot-cpp's hashfuncs.hpp declares
+`hash_murmur3_one_float` / `_double` `static`, i.e. with internal linkage, and
+each declares an unnamed union inside its body. A local class has no linkage,
+so once the enclosing TU-local function is exposed -- which it is, from many
+reachable inline bodies -- GCC rejects the module interface outright:
+
+    error: 'uint32_t godot::hash_murmur3_one_float(float, uint32_t)' exposes
+           TU-local entity 'union ...::<unnamed>'
+    note: ... is also TU-local but has been exposed elsewhere
+
+That is a hard error, not the -Wexpose-global-module-tu-local warning:
+-Wno-..., -fpermissive and -Wno-error= all leave it standing (verified). It
+cannot be dodged by exporting less either -- with godot-cpp 10.x, a single
+engine class is enough to trigger it, and removing every such class in turn
+never converges.
+
+The shim is upstream's hashfuncs.hpp with `static` dropped from those two
+functions and NOTHING else changed. This package's own include/ comes before
+the dependency's on the command line, so the module TU sees the shim while
+compat.godot-cpp's library TUs keep compiling upstream's file untouched. The
+bodies are identical, so the only difference is linkage: internal (one copy
+per TU, invisible) becomes inline (one weak symbol). With it, the entire
+`godot` namespace re-exports cleanly and no name has to be held back.
+
 What a module cannot carry, and this therefore does not: MACROS. GDCLASS,
 GDREGISTER_CLASS, memnew/memdelete, the ERR_* family and GDVIRTUAL_* are
 preprocessor constructs, so a registration TU still needs the corresponding
@@ -31,30 +55,9 @@ from pathlib import Path
 # Namespaces whose members get re-exported. `internal` is excluded on purpose.
 EXPORTED_NAMESPACES = ("godot", "godot::Math", "godot::helpers")
 
-# Declarations that must not be re-exported.
-#   * `_gde_UnexistingClass` is a placeholder for unexposed engine types.
-#   * The `Ref`/`TypedArray` etc. forward declarations are covered by their
-#     real definitions; duplicates are removed by the dedup below.
-SKIP_NAMES = {
-    "_gde_UnexistingClass",
-    # godot-cpp's default hashers inline-call `hash_murmur3_one_float/double`,
-    # which are `static` AND declare an unnamed union in their bodies. An
-    # unnamed union type is TU-local, and exposing a TU-local TYPE from a
-    # module interface is a hard error (not the -Wexpose-global-module-tu-local
-    # warning), so these cannot be re-exported. They are godot-cpp's internal
-    # container plumbing -- extension code uses Dictionary/Array/TypedArray --
-    # and stay reachable through the headers for anyone who needs them.
-    # Reaching them: HashMap/HashSet default their Hasher template parameter
-    # to HashMapHasherDefault, so re-exporting the container re-exports the
-    # hasher's inline bodies with it.
-    "HashMapHasherDefault",
-    "HashableHasher",
-    "HashHasher",
-    "HashMap",
-    "HashMapElement",
-    "HashSet",
-    "PairHash",
-}
+# Declarations that must not be re-exported: `_gde_UnexistingClass` is
+# upstream's placeholder for engine types it does not expose.
+SKIP_NAMES = {"_gde_UnexistingClass"}
 
 COMMENT_RE = re.compile(r"//[^\n]*|/\*.*?\*/", re.S)
 STRING_RE = re.compile(r'"(?:[^"\\\n]|\\.)*"|\'(?:[^\'\\\n]|\\.)*\'')
@@ -253,15 +256,22 @@ class Scanner:
         # name -> category, per namespace
         self.decls: dict[str, dict[str, str]] = {ns: {} for ns in EXPORTED_NAMESPACES}
         self.order: dict[str, list[str]] = {ns: [] for ns in EXPORTED_NAMESPACES}
+        # (ns, name) -> set of headers that declare it
+        self.sources: dict[tuple[str, str], set[str]] = {}
+        self.current_header = ""
 
     def record(self, ns: str, name: str, category: str) -> None:
         if ns not in self.decls or name in SKIP_NAMES:
             return
         if name.startswith("__"):
             return
+        self.sources.setdefault((ns, name), set()).add(self.current_header)
         if name not in self.decls[ns]:
             self.decls[ns][name] = category
             self.order[ns].append(name)
+
+    def exported(self, ns: str) -> list[str]:
+        return list(self.order[ns])
 
     def scan(self, text: str) -> None:
         text = strip_noise(text)
@@ -366,11 +376,66 @@ export module godot_cpp;
 """
 
 
+SHIM_REL = "godot_cpp/templates/hashfuncs.hpp"
+
+# The two declarations the shim rewrites, and what it rewrites them to. Both
+# must match exactly once; a miss means upstream moved and the shim would
+# silently stop working.
+SHIM_EDITS = [
+    ("static _FORCE_INLINE_ uint32_t hash_murmur3_one_float(",
+     "_FORCE_INLINE_ uint32_t hash_murmur3_one_float("),
+    ("static _FORCE_INLINE_ uint32_t hash_murmur3_one_double(",
+     "_FORCE_INLINE_ uint32_t hash_murmur3_one_double("),
+]
+
+SHIM_BANNER = """\
+// GENERATED by tools/gen_module_cppm.py -- do not hand-edit.
+//
+// This is godot-cpp's own include/{rel}, byte for byte, with
+// ONE difference: `static` is dropped from hash_murmur3_one_float and
+// hash_murmur3_one_double.
+//
+// Why: those two declare an unnamed union inside their bodies, and a local
+// class has no linkage. `static` makes the enclosing function TU-local, and
+// the module interface exposes it (reachable from many inline bodies), so GCC
+// rejects the module outright -- "exposes TU-local entity 'union ...
+// <unnamed>'", a hard error that -Wno-expose-global-module-tu-local,
+// -fpermissive and -Wno-error= do not touch.
+//
+// This package's include/ precedes the dependency's on the command line, so
+// only this package's translation units see the file; compat.godot-cpp keeps
+// compiling upstream's copy untouched. The bodies are identical -- the sole
+// change is linkage, internal to inline.
+"""
+
+
+def write_shim(root: Path, out_path: Path) -> None:
+    src = root / "include" / SHIM_REL
+    text = src.read_text(encoding="utf-8")
+    for old, new in SHIM_EDITS:
+        if text.count(old) != 1:
+            raise SystemExit(
+                f"error: expected exactly one `{old}` in {src}, found "
+                f"{text.count(old)} -- upstream changed, revisit the shim")
+        text = text.replace(old, new)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(SHIM_BANNER.format(rel=SHIM_REL) + text, encoding="utf-8")
+    sys.stderr.write(f"wrote shim {out_path}\n")
+
+
 def main(argv: list[str]) -> int:
-    if len(argv) != 2:
-        sys.stderr.write(f"usage: {argv[0]} <godot-cpp-checkout>\n")
+    shim_out = None
+    args = list(argv[1:])
+    if "--shim-out" in args:
+        i = args.index("--shim-out")
+        shim_out = Path(args[i + 1])
+        del args[i:i + 2]
+    if len(args) != 1:
+        sys.stderr.write(f"usage: {argv[0]} [--shim-out <path>] <godot-cpp-checkout>\n")
         return 2
-    root = Path(argv[1])
+    root = Path(args[0])
+    if shim_out is not None:
+        write_shim(root, shim_out)
     include_roots = [root / "include", root / "gen" / "include"]
     for r in include_roots:
         if not r.is_dir():
@@ -383,7 +448,8 @@ def main(argv: list[str]) -> int:
             headers.append((p, str(p.relative_to(r).as_posix())))
 
     scanner = Scanner()
-    for path, _rel in headers:
+    for path, rel in headers:
+        scanner.current_header = rel
         scanner.scan(path.read_text(encoding="utf-8", errors="replace"))
 
     version = "unknown"
@@ -400,7 +466,7 @@ def main(argv: list[str]) -> int:
     out = [HEADER.format(version=version, includes=includes)]
 
     for ns in EXPORTED_NAMESPACES:
-        names = scanner.order[ns]
+        names = scanner.exported(ns)
         if not names:
             continue
         out.append(f"export namespace {ns} {{\n")

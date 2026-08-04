@@ -1,6 +1,8 @@
 # godot-cpp-m
 
 > godot-cpp as a C++23 module for mcpp — the same API, reached with `import godot_cpp;`.
+>
+> Targets **Godot 4.6** (`compat.godot-cpp` 10.0.0-rc1). For Godot 4.5, use `godot-cpp-m = "4.5.0"`.
 
 ```cpp
 import std;
@@ -28,12 +30,16 @@ int main() {
 
 ```toml
 [dependencies]
-godot-cpp-m = "4.5.0"
+godot-cpp-m = "10.0.0-rc1"   # Godot 4.6; use "4.5.0" for Godot 4.5
 ```
 
-The version tracks upstream: `4.5.0` is the godot-cpp release this wraps, the
-same version `compat.godot-cpp` carries, so the number tells you which Godot
-you are targeting.
+The version tracks upstream godot-cpp, which is also the version
+`compat.godot-cpp` carries:
+
+| package version | upstream tag | engine |
+|---|---|---|
+| `10.0.0-rc1` | `10.0.0-rc1` | Godot 4.6 |
+| `4.5.0` | `godot-4.5-stable` | Godot 4.5 |
 
 ## Macros
 
@@ -68,13 +74,37 @@ include and the import this way is well-formed. `tests/godot_cpp_macros.cpp`
 covers exactly this shape. Any other upstream header can be included the same
 way — they are all on the include path.
 
-## What is NOT re-exported
+## The hashfuncs shim
 
-| name | why |
-|---|---|
-| `HashMap`, `HashSet`, `HashMapElement`, `HashMapHasherDefault`, `HashHasher`, `HashableHasher`, `PairHash` | their inline bodies reach `hash_murmur3_one_float/double`, which are `static` **and** declare an unnamed union. An unnamed union type is TU-local, and exposing a TU-local *type* from a module interface is a hard error, not a warning. These are godot-cpp's internal container plumbing — extension code uses `Dictionary`/`Array`/`TypedArray` — and they stay reachable through the headers. |
-| `godot::internal` | the gdextension interface plumbing; the module's own definitions use it without it being public API. |
-| namespace-scope `const`/`constexpr` variables | internal linkage, so not exportable at all. Take them from the header. |
+`include/godot_cpp/templates/hashfuncs.hpp` is generated, and it is what makes
+the whole `godot` namespace exportable at all.
+
+godot-cpp declares `hash_murmur3_one_float` / `_double` `static`, and each
+declares an unnamed union inside its body. A local class has no linkage, and
+`static` makes the enclosing function TU-local, so once the module interface
+exposes it — which it does, reachable from many inline bodies — GCC rejects the
+module outright:
+
+```
+error: 'uint32_t godot::hash_murmur3_one_float(float, uint32_t)' exposes
+       TU-local entity 'union ...::<unnamed>'
+note: ... is also TU-local but has been exposed elsewhere
+```
+
+That is a hard error, not the `-Wexpose-global-module-tu-local` warning:
+`-Wno-...`, `-fpermissive` and `-Wno-error=` all leave it standing. Exporting
+less does not help either — with 10.x a single engine class is enough to
+trigger it.
+
+The shim is upstream's header with `static` dropped from those two functions
+and nothing else changed. This package's `include/` precedes the dependency's
+on the command line, so only this package's translation units see it;
+`compat.godot-cpp` keeps compiling upstream's copy untouched. The bodies are
+identical — the sole difference is linkage, internal to inline — and the
+generator refuses to run if either declaration stops matching exactly once.
+
+With it in place nothing has to be held back: `HashMap`, `HashSet`, `AHashMap`,
+`Pair`, the hashers and the rest of `templates/` all re-export normally.
 
 ## Example
 
@@ -93,7 +123,8 @@ cd examples/summator && mcpp build
 version bump:
 
 ```sh
-python3 tools/gen_module_cppm.py <godot-cpp-checkout-with-gen/> > src/godot_cpp.cppm
+python3 tools/gen_module_cppm.py --shim-out include/godot_cpp/templates/hashfuncs.hpp \
+  <godot-cpp-checkout-with-gen/> > src/godot_cpp.cppm
 mcpp test
 ```
 

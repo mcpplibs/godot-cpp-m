@@ -17,7 +17,7 @@
 # the repository name.
 [package]
 name        = "godot-cpp-m"
-version     = "4.5.0"
+version     = "10.0.0-rc1"
 description = "godot-cpp as a C++23 module (import godot_cpp;) on top of the compat.godot-cpp source build"
 license     = "MIT"
 repo        = "https://github.com/mcpplibs/godot-cpp-m"
@@ -41,4 +41,4 @@ cxxflags = ["-Wno-expose-global-module-tu-local"]
 
 [dependencies]
 # Upstream tree + pre-generated bindings + the whole source build recipe.
-compat.godot-cpp = "4.5.0"
+compat.godot-cpp = "10.0.0-rc1"
