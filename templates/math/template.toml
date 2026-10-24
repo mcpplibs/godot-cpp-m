@@ -1,0 +1,4 @@
+[template]
+description = "Run godot-cpp vector and color math through modules without a Godot process"
+default = true
+post_message = "Run `mcpp run` to execute standalone godot-cpp vector and color math. Engine classes need a loaded GDExtension."

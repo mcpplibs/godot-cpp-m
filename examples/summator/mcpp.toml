@@ -4,11 +4,11 @@
 #
 #   mcpp build
 #   # then point summator.gdextension at the produced library and drop both
-#   # into a Godot 4.5 project
+#   # into a matching Godot 4.6 project
 [package]
 name        = "summator"
 version     = "0.1.0"
-description = "Minimal Godot 4.5 GDExtension written with import godot_cpp;"
+description = "Minimal Godot 4.6 GDExtension written with import godot_cpp;"
 license     = "MIT"
 
 [targets.summator]

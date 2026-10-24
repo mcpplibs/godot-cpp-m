@@ -16,8 +16,9 @@
 # <verdir>/*/mcpp.toml". Distinct short names sidestep it, and `-m` matches
 # the repository name.
 [package]
+namespace   = "godotengine"
 name        = "godot-cpp-m"
-version     = "10.0.0-rc1"
+version     = "10.0.0-rc1.1"
 description = "godot-cpp as a C++23 module (import godot_cpp;) on top of the compat.godot-cpp source build"
 license     = "MIT"
 repo        = "https://github.com/mcpplibs/godot-cpp-m"
@@ -25,6 +26,9 @@ platforms   = ["linux", "macos", "windows"]
 
 [targets.godot-cpp-m]
 kind = "lib"
+
+[lib]
+path = "src/godot_cpp.cppm"
 
 [build]
 sources      = ["src/**/*.cppm"]
