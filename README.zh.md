@@ -4,7 +4,7 @@
 
 [English](README.md) · **简体中文**
 
-使用 mcpp **2026.10.24.1**。新 mwrap 身份在索引发布后可直接安装。
+上游仓库：[godotengine/godot-cpp](https://github.com/godotengine/godot-cpp)
 
 ## 安装
 
