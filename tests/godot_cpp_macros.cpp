@@ -1,6 +1,6 @@
 // The macro half of the contract: a real GDExtension class declaration --
 // GDCLASS, a bound method, an overridden engine virtual -- written next to
-// `import godot_cpp;`, with only the side header included.
+// `import mcpplibs.mwrap.godot_cpp;`, with only the side header included.
 //
 // This is the case a named module cannot cover on its own, so it gets its own
 // test: it proves that textually including godot-cpp's headers alongside the
@@ -18,7 +18,7 @@
 #include <godot-cpp-m/macros.h>
 
 import std;
-import godot_cpp;
+import mcpplibs.mwrap.godot_cpp;
 
 using namespace godot;
 

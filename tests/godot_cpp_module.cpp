@@ -1,5 +1,5 @@
 // Behavioral test for the `godot_cpp` module: the same godot-cpp API as
-// always, reached with `import godot_cpp;` and no #include at all.
+// always, reached with `import mcpplibs.mwrap.godot_cpp;` and no #include at all.
 //
 // The assertions mirror the compat.godot-cpp test on purpose -- if the module
 // re-export changed behaviour, these are the numbers that would move.
@@ -8,7 +8,7 @@
 // class registration) is out of scope for a standalone binary.
 
 import std;
-import godot_cpp;
+import mcpplibs.mwrap.godot_cpp;
 
 namespace {
 

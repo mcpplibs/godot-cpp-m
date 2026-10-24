@@ -58,6 +58,9 @@ jobs:
       # repeat run rebuilds little. Keyed off the tracked inputs only --
       # `git ls-files -s` reads the index, so build output can never enter the
       # hash the way a hashFiles() glob would.
+      - name: Mwrap identity and bilingual README contract
+        run: python3 tools/check_mwrap_release.py
+
       - name: Compute registry cache key
         shell: bash
         run: |

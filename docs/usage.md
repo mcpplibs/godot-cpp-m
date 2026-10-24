@@ -1,12 +1,12 @@
 # godot-cpp-m
 
-> godot-cpp as a C++23 module for mcpp — the same API, reached with `import godot_cpp;`.
+> godot-cpp as a C++23 module for mcpp — the same API, reached with `import mcpplibs.mwrap.godot_cpp;`.
 >
 > Targets **Godot 4.6** (`compat.godot-cpp` 10.0.0-rc1). For Godot 4.5, use `godot-cpp-m = "4.5.0"`.
 
 ```cpp
 import std;
-import godot_cpp;
+import mcpplibs.mwrap.godot_cpp;
 
 int main() {
     godot::Vector2 v{3, 4};
@@ -30,11 +30,11 @@ int main() {
 
 ```toml
 [dependencies]
-"godotengine.godot-cpp-m" = "10.0.0-rc1.1"   # Godot 4.6; use "4.5.0" for Godot 4.5
+"mcpplibs.mwrap.godot_cpp" = "10.0.0-rc1"   # Godot 4.6; use "4.5.0" for Godot 4.5
 ```
 
 The version tracks upstream godot-cpp. A numeric wrapper revision may follow
-the upstream version: candidate `10.0.0-rc1.1` still uses SDK `10.0.0-rc1`.
+the upstream version: candidate `10.0.0-rc1` still uses SDK `10.0.0-rc1`.
 The historical upstream mapping is:
 
 | package version | upstream tag | engine |
@@ -51,7 +51,7 @@ classes includes the side header next to the import:
 
 ```cpp
 #include <godot-cpp-m/macros.h>
-import godot_cpp;
+import mcpplibs.mwrap.godot_cpp;
 
 using namespace godot;
 
@@ -111,7 +111,7 @@ With it in place nothing has to be held back: `HashMap`, `HashSet`, `AHashMap`,
 
 `examples/summator/` is a complete GDExtension — registered class, bound
 methods, entry point — built as the shared library Godot loads, written with
-`import godot_cpp;`:
+`import mcpplibs.mwrap.godot_cpp;`:
 
 ```sh
 cd examples/summator && mcpp build

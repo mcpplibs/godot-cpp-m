@@ -1,14 +1,14 @@
 // godot-cpp-m/macros.h -- optional side header for godot-cpp's preprocessor surface.
 //
 // C++ named modules cannot export MACROS. Everything with linkage comes from
-// `import godot_cpp;`; the macro spellings that GDExtension code is written in
+// `import mcpplibs.mwrap.godot_cpp;`; the macro spellings that GDExtension code is written in
 // -- GDCLASS, GDREGISTER_CLASS, GDVIRTUAL_*, D_METHOD, memnew/memdelete, the
 // ERR_* family, VARIANT_ENUM_CAST -- are preprocessor constructs, so a
 // translation unit that registers classes textually includes THIS header next
 // to the import:
 //
 //     #include <godot-cpp-m/macros.h>
-//     import godot_cpp;
+//     import mcpplibs.mwrap.godot_cpp;
 //
 //     class Player : public godot::Node2D {
 //         GDCLASS(Player, Node2D)
