@@ -129,6 +129,12 @@ jobs:
           MCPP_INDEX_MIRROR: GLOBAL
         run: '"$MCPP" test --strict'
 
+      - name: Actual default scaffold, strict build and standalone math
+        shell: bash
+        env:
+          MCPP_INDEX_MIRROR: GLOBAL
+        run: python3 tools/test_template.py --mcpp "$MCPP" --toolchain "${{ matrix.toolchain }}"
+
       # Verify the native shared-library shape on every supported platform.
       # Loading this library still requires a matching Godot process.
       - name: Build the summator GDExtension example
@@ -138,8 +144,7 @@ jobs:
           MCPP_INDEX_MIRROR: GLOBAL
         run: '"$MCPP" build --strict'
 
-      - name: Actual default scaffold, strict build and standalone math
+      - name: Verify the Windows Godot entry point and export boundary
+        if: runner.os == 'Windows'
         shell: bash
-        env:
-          MCPP_INDEX_MIRROR: GLOBAL
-        run: python3 tools/test_template.py --mcpp "$MCPP" --toolchain "${{ matrix.toolchain }}"
+        run: python3 tools/check_extension_exports.py

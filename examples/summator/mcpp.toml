@@ -13,6 +13,9 @@ license     = "MIT"
 
 [targets.summator]
 kind = "shared"
+# Godot loads the GDE_EXPORT C entry point; it does not import the SDK's C++
+# symbols. Avoid scanning all 1,000+ SDK objects for automatic PE exports.
+windows_auto_export = false
 
 [dependencies]
 godot-cpp-m = { path = "../.." }
