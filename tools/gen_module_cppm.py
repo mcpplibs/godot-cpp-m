@@ -372,6 +372,7 @@ module;
 {includes}
 
 export module mcpplibs.mwrap.godot_cpp;
+export import mcpplibs.mwrap.godot_cpp.macros;
 
 """
 
@@ -477,7 +478,6 @@ def main(argv: list[str]) -> int:
                 out.append(f"using ::{ns}::{name};\n")
         out.append("}\n\n")
 
-    out.append("export import mcpplibs.mwrap.godot_cpp.macros;\n")
     sys.stdout.write("".join(out))
     return 0
 

@@ -1148,6 +1148,7 @@ module;
 #include <godot_cpp/variant/variant_size.hpp>
 
 export module mcpplibs.mwrap.godot_cpp;
+export import mcpplibs.mwrap.godot_cpp.macros;
 
 export namespace godot {
 using ::godot::EditorPlugin;
@@ -2977,4 +2978,3 @@ using ::godot::helpers::append_all;
 }
 
 
-export import mcpplibs.mwrap.godot_cpp.macros;
