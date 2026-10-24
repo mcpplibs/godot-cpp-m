@@ -2,9 +2,10 @@
 [package]
 namespace = "mcpplibs.mwrap"
 name = "godot_cpp"
-version = "10.0.0-rc1"
+version = "10.0.0-rc1.1"
 description = "godot-cpp as a C++23 module (import mcpplibs.mwrap.godot_cpp;) on top of the compat.godot-cpp source build"
-license     = "MIT"
+license = "Apache-2.0"
+authors = ["mcpp-community"]
 repo        = "https://github.com/mcpplibs/godot-cpp-m"
 platforms   = ["linux", "macos", "windows"]
 
@@ -32,4 +33,25 @@ cxxflags = ["-Wno-expose-global-module-tu-local"]
 compat.godot-cpp = "10.0.0-rc1"
 
 [package.metadata.mwrap]
+wrapper-revision = 1
 upstream-version = "10.0.0-rc1"
+
+[[runtime.deploy]]
+from = "LICENSE"
+to = "licenses/godot_cpp"
+
+[[runtime.deploy]]
+from = "NOTICE"
+to = "licenses/godot_cpp"
+
+[[runtime.deploy]]
+from = "upstream/godot-cpp/README.md"
+to = "licenses/godot_cpp/upstream/godot-cpp"
+
+[[runtime.deploy]]
+from = "upstream/godot-cpp/LICENSE.md"
+to = "licenses/godot_cpp/upstream/godot-cpp"
+
+[[runtime.deploy]]
+from = "upstream/wrapper-legacy/LICENSE"
+to = "licenses/godot_cpp/upstream/wrapper-legacy"

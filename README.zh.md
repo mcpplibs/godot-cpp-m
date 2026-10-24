@@ -5,7 +5,8 @@
 [English](README.md) · **简体中文** · [Upstream](https://github.com/godotengine/godot-cpp) · [Releases](https://github.com/mcpplibs/godot-cpp-m/releases) · [mcpp](https://github.com/mcpp-community/mcpp) · [Index](https://github.com/mcpplibs/mcpp-index)
 
 [![C++23](https://img.shields.io/badge/C%2B%2B-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![mcpp-community](https://img.shields.io/badge/mcpp--community-mwrap-blue)](https://github.com/mcpp-community)
 [![CI](https://github.com/mcpplibs/godot-cpp-m/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mcpplibs/godot-cpp-m/actions/workflows/ci.yml)
 
 ## 模块
@@ -18,14 +19,14 @@
 ## 安装
 
 ```sh
-mcpp new godot_math --template mcpplibs.mwrap.godot_cpp@10.0.0-rc1
+mcpp new godot_math --template mcpplibs.mwrap.godot_cpp@10.0.0-rc1.1
 cd godot_math
 mcpp run
 ```
 
 ```toml
 [dependencies]
-mcpplibs.mwrap.godot_cpp = "10.0.0-rc1"
+mcpplibs.mwrap.godot_cpp = "10.0.0-rc1.1"
 ```
 
 ## 宏
@@ -57,4 +58,6 @@ int main() { return godot::Vector2(3, 4).length() == 5 ? 0 : 1; }
 
 ## 许可证
 
-[MIT](LICENSE)；compat.godot-cpp 提供上游源码、生成绑定及通知。
+[Apache-2.0](LICENSE)；compat.godot-cpp 提供上游源码、生成绑定及通知。
+
+封装：Apache-2.0，mcpp-community。[上游原始 README 与许可证](upstream/godot-cpp/)，上游许可保持原样。

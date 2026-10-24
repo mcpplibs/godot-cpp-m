@@ -30,16 +30,16 @@ int main() {
 
 ```toml
 [dependencies]
-"mcpplibs.mwrap.godot_cpp" = "10.0.0-rc1"   # Godot 4.6; use "4.5.0" for Godot 4.5
+"mcpplibs.mwrap.godot_cpp" = "10.0.0-rc1.1"   # Godot 4.6; use "4.5.0" for Godot 4.5
 ```
 
 The version tracks upstream godot-cpp. A numeric wrapper revision may follow
-the upstream version: candidate `10.0.0-rc1` still uses SDK `10.0.0-rc1`.
+the upstream version: candidate `10.0.0-rc1.1` still uses SDK `10.0.0-rc1`.
 The historical upstream mapping is:
 
 | package version | upstream tag | engine |
 |---|---|---|
-| `10.0.0-rc1` | `10.0.0-rc1` | Godot 4.6 |
+| `10.0.0-rc1.1` | `10.0.0-rc1` | Godot 4.6 |
 | `4.5.0` | `godot-4.5-stable` | Godot 4.5 |
 
 ## Macros

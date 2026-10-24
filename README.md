@@ -5,7 +5,8 @@
 **English** · [简体中文](README.zh.md) · [Upstream](https://github.com/godotengine/godot-cpp) · [Releases](https://github.com/mcpplibs/godot-cpp-m/releases) · [mcpp](https://github.com/mcpp-community/mcpp) · [Index](https://github.com/mcpplibs/mcpp-index)
 
 [![C++23](https://img.shields.io/badge/C%2B%2B-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
+[![mcpp-community](https://img.shields.io/badge/mcpp--community-mwrap-blue)](https://github.com/mcpp-community)
 [![CI](https://github.com/mcpplibs/godot-cpp-m/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mcpplibs/godot-cpp-m/actions/workflows/ci.yml)
 
 ## Modules
@@ -18,14 +19,14 @@
 ## Install
 
 ```sh
-mcpp new godot_math --template mcpplibs.mwrap.godot_cpp@10.0.0-rc1
+mcpp new godot_math --template mcpplibs.mwrap.godot_cpp@10.0.0-rc1.1
 cd godot_math
 mcpp run
 ```
 
 ```toml
 [dependencies]
-mcpplibs.mwrap.godot_cpp = "10.0.0-rc1"
+mcpplibs.mwrap.godot_cpp = "10.0.0-rc1.1"
 ```
 
 ## Macros
@@ -57,4 +58,6 @@ This is a prerelease binding, not certification of engine loading.
 
 ## License
 
-[MIT](LICENSE); compat.godot-cpp carries upstream sources, generated bindings and notices.
+[Apache-2.0](LICENSE); compat.godot-cpp carries upstream sources, generated bindings and notices.
+
+Wrapper: Apache-2.0, mcpp-community. [Original upstream README and licenses](upstream/godot-cpp/). Upstream licenses remain unchanged.
