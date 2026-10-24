@@ -2,7 +2,7 @@
 [package]
 namespace = "mcpplibs.mwrap"
 name = "godot_cpp"
-version = "10.0.0-rc1.1"
+version = "10.0.0-rc1"
 description = "godot-cpp as a C++23 module (import mcpplibs.mwrap.godot_cpp;) on top of the compat.godot-cpp source build"
 license = "Apache-2.0"
 authors = ["mcpp-community"]
@@ -33,7 +33,7 @@ cxxflags = ["-Wno-expose-global-module-tu-local"]
 compat.godot-cpp = "10.0.0-rc1"
 
 [package.metadata.mwrap]
-wrapper-revision = 1
+wrapper-revision = 0
 upstream-version = "10.0.0-rc1"
 
 [[runtime.deploy]]

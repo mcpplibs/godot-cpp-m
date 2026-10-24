@@ -19,14 +19,14 @@
 ## Install
 
 ```sh
-mcpp new godot_math --template mcpplibs.mwrap.godot_cpp@10.0.0-rc1.1
+mcpp new godot_math --template mcpplibs.mwrap.godot_cpp@10.0.0-rc1
 cd godot_math
 mcpp run
 ```
 
 ```toml
 [dependencies]
-mcpplibs.mwrap.godot_cpp = "10.0.0-rc1.1"
+mcpplibs.mwrap.godot_cpp = "10.0.0-rc1"
 ```
 
 ## Macros
