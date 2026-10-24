@@ -2,11 +2,18 @@
 
 > godot-cpp 10.0.0-rc1 as C++23 modules, preserving godot:: APIs.
 
-**English** · [简体中文](README.zh.md) · Upstream: [godotengine/godot-cpp](https://github.com/godotengine/godot-cpp) · [Releases](https://github.com/mcpplibs/godot-cpp-m/releases) · [mcpp](https://github.com/mcpp-community/mcpp) · [Index](https://github.com/mcpplibs/mcpp-index)
+**English** · [简体中文](README.zh.md) · [Upstream](https://github.com/godotengine/godot-cpp) · [Releases](https://github.com/mcpplibs/godot-cpp-m/releases) · [mcpp](https://github.com/mcpp-community/mcpp) · [Index](https://github.com/mcpplibs/mcpp-index)
 
 [![C++23](https://img.shields.io/badge/C%2B%2B-23-blue.svg)](https://en.cppreference.com/w/cpp/23)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![CI](https://github.com/mcpplibs/godot-cpp-m/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/mcpplibs/godot-cpp-m/actions/workflows/ci.yml)
+
+## Modules
+
+- `import mcpplibs.mwrap.godot_cpp;`: godot:: math and GDExtension bindings
+- `import mcpplibs.mwrap.godot_cpp.macros;`: Version macro mappings
+
+> More Modules API -> [Usage and API](docs/usage.md)
 
 ## Install
 
