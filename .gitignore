@@ -1,5 +1,7 @@
 target/
 .mcpp/
+.xlings/
+__pycache__/
 mcpp.lock
 gcm.cache/
 compile_commands.json

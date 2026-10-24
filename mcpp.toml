@@ -1,30 +1,18 @@
-# godot-cpp-m -- godot-cpp as a C++23 module.
-#
-# This package is ONLY the module layer. Upstream's sources and its
-# pre-generated GDExtension bindings arrive through the compat.godot-cpp index
-# package, which compiles them (1022 TUs) as an ordinary mcpp source package.
-# The version TRACKS UPSTREAM: 4.5.0 is the godot-cpp / Godot release this
-# wraps, the same version compat.godot-cpp carries. A module layer that only
-# re-exports an API has no version of its own worth inventing -- what a
-# consumer needs to know from the version is which Godot it targets.
-#
-# The NAME is `godot-cpp-m`, not `godot-cpp`, and that is load-bearing: this
-# package and its own compat.godot-cpp dependency are always resolved
-# together, and mcpp's installed-package lookup matches on (name, version)
-# without the namespace -- two packages sharing both would have this one
-# resolve to the other's unpacked directory and fail with "no mcpp.toml at
-# <verdir>/*/mcpp.toml". Distinct short names sidestep it, and `-m` matches
-# the repository name.
+# Module wrapper; upstream API preserved. Policy: mcpp-index/docs/mwrap.md.
 [package]
-name        = "godot-cpp-m"
-version     = "10.0.0-rc1"
-description = "godot-cpp as a C++23 module (import godot_cpp;) on top of the compat.godot-cpp source build"
+namespace = "mcpplibs.mwrap"
+name = "godot_cpp"
+version = "10.0.0-rc1"
+description = "godot-cpp as a C++23 module (import mcpplibs.mwrap.godot_cpp;) on top of the compat.godot-cpp source build"
 license     = "MIT"
 repo        = "https://github.com/mcpplibs/godot-cpp-m"
 platforms   = ["linux", "macos", "windows"]
 
-[targets.godot-cpp-m]
+[targets.godot_cpp]
 kind = "lib"
+
+[lib]
+path = "src/godot_cpp.cppm"
 
 [build]
 sources      = ["src/**/*.cppm"]
@@ -42,3 +30,6 @@ cxxflags = ["-Wno-expose-global-module-tu-local"]
 [dependencies]
 # Upstream tree + pre-generated bindings + the whole source build recipe.
 compat.godot-cpp = "10.0.0-rc1"
+
+[package.metadata.mwrap]
+upstream-version = "10.0.0-rc1"

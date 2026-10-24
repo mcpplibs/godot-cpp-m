@@ -1,18 +1,21 @@
 # A real GDExtension, built as the shared library Godot loads -- the shape
-# godot-cpp actually ships in. Written against `import godot_cpp;` with the
+# godot-cpp actually ships in. Written against `import mcpplibs.mwrap.godot_cpp;` with the
 # side header for the registration macros.
 #
 #   mcpp build
 #   # then point summator.gdextension at the produced library and drop both
-#   # into a Godot 4.5 project
+#   # into a matching Godot 4.6 project
 [package]
 name        = "summator"
 version     = "0.1.0"
-description = "Minimal Godot 4.5 GDExtension written with import godot_cpp;"
+description = "Minimal Godot 4.6 GDExtension written with import mcpplibs.mwrap.godot_cpp;"
 license     = "MIT"
 
 [targets.summator]
 kind = "shared"
+# Godot loads the GDE_EXPORT C entry point; it does not import the SDK's C++
+# symbols. Avoid scanning all 1,000+ SDK objects for automatic PE exports.
+windows_auto_export = false
 
 [dependencies]
-godot-cpp-m = { path = "../.." }
+"mcpplibs.mwrap.godot_cpp" = { path = "../.." }

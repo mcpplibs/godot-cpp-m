@@ -1,5 +1,5 @@
 // A complete Godot 4.5 GDExtension -- registered class, bound methods,
-// entry point -- written with `import godot_cpp;`.
+// entry point -- written with `import mcpplibs.mwrap.godot_cpp;`.
 //
 // Compare with upstream's C++ version of the same example: the only
 // difference is the first three lines. Everything below is ordinary
@@ -7,7 +7,7 @@
 
 #include <godot-cpp-m/macros.h>   // GDCLASS, GDREGISTER_CLASS, D_METHOD, the entry-point plumbing
 
-import godot_cpp;
+import mcpplibs.mwrap.godot_cpp;
 
 using namespace godot;
 

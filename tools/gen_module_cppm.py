@@ -363,7 +363,7 @@ HEADER = """\
 //     #include <godot_cpp/classes/node.hpp>
 //     godot::Node *n = ...;
 //
-// says `import godot_cpp;` instead and is otherwise unchanged. Macros are the one
+// says `import mcpplibs.mwrap.godot_cpp;` instead and is otherwise unchanged. Macros are the one
 // thing a module cannot carry (GDCLASS, GDREGISTER_CLASS, memnew, ERR_*,
 // GDVIRTUAL_*): a TU that registers classes still includes the header that
 // defines them.
@@ -371,7 +371,8 @@ module;
 
 {includes}
 
-export module godot_cpp;
+export module mcpplibs.mwrap.godot_cpp;
+export import mcpplibs.mwrap.godot_cpp.macros;
 
 """
 
