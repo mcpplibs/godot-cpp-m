@@ -30,7 +30,7 @@ def main():
         home = temporary / "home"
         package = home / "registry/data/xpkgs" / (namespace + "-x-" + name) / version / (name + "-" + version)
         shutil.copytree(root, package, ignore=shutil.ignore_patterns(
-            ".git", "target", ".mcpp", ".xlings", ".candidate-index", "__pycache__", "mcpp.lock", "compile_commands.json", ".candidate-index", "mcpp-2026.*"))
+            ".git", "target", ".mcpp", ".xlings", ".candidate-index", "__pycache__", "mcpp.lock", "compile_commands.json", "mcpp-2026.*"))
         index = home / "indices/mcpplibs/pkgs/mwrap"
         index.mkdir(parents=True)
         entry = '{url="https://example.invalid/candidate.tar.gz",sha256="fixture"}'
