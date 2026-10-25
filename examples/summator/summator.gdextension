@@ -1,6 +1,6 @@
 [configuration]
 entry_symbol = "summator_library_init"
-compatibility_minimum = "4.6"
+compatibility_minimum = "4.7"
 
 [libraries]
 linux.debug.x86_64   = "res://bin/libsummator.so"

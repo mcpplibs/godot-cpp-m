@@ -1,4 +1,4 @@
-// A complete Godot 4.5 GDExtension -- registered class, bound methods,
+// A complete Godot 4.7 GDExtension -- registered class, bound methods,
 // entry point -- written with `import mcpplibs.mwrap.godot_cpp;`.
 //
 // Compare with upstream's C++ version of the same example: the only

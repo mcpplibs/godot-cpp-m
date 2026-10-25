@@ -2,7 +2,7 @@
 
 > godot-cpp as a C++23 module for mcpp — the same API, reached with `import mcpplibs.mwrap.godot_cpp;`.
 >
-> Targets **Godot 4.7** (`compat.godot-cpp` 10.0.0). For Godot 4.5, use `godot-cpp-m = "4.5.0"`.
+> Targets **Godot 4.7** (`compat.godot-cpp` 10.0.0). Other engine API profiles require a matching generated provider.
 
 ```cpp
 import std;
@@ -30,7 +30,7 @@ int main() {
 
 ```toml
 [dependencies]
-"mcpplibs.mwrap.godot_cpp" = "10.0.0"   # Godot 4.7; use "4.5.0" for Godot 4.5
+"mcpplibs.mwrap.godot_cpp" = "10.0.0"   # Upstream-default Godot 4.7 API
 ```
 
 The version tracks upstream godot-cpp. A numeric wrapper revision may follow
@@ -40,7 +40,6 @@ The historical upstream mapping is:
 | package version | upstream tag | engine |
 |---|---|---|
 | `10.0.0` | `10.0.0-stable` | Godot 4.7 (upstream-default API) |
-| `4.5.0` | `godot-4.5-stable` | Godot 4.5 |
 
 ## Macros
 
