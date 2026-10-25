@@ -1,0 +1,13 @@
+[godot-cpp]
+version = "10.0.0"
+tag = "10.0.0-stable"
+commit = "507ed9d840c01a3c5b2a39af8bb4000bfac30bf5"
+repo = "https://github.com/godotengine/godot-cpp"
+upstream-archive-sha256 = "ebbf64f0f8f8b8b66bc4bc4d3797db97f95b19cf0dfb5b3f8cf56683d9df7db4"
+provider = "compat.godot-cpp@10.0.0"
+provider-archive-sha256 = "66aaafb642e7a390482dc381818640b1d0e583da2ef0cc9709214bcd13b68264"
+engine-api = "4.7"
+architecture-bits = 64
+precision = "single"
+template-get-node = true
+generation = "Unmodified upstream binding_generator.py; upstream tree byte-identical; gen/ is the only addition"

@@ -1,14 +1,14 @@
 {
-  "upstream": "https://github.com/xlings-res/godot-cpp/releases/download/10.0.0-rc1/godot-cpp-10.0.0-rc1.tar.gz",
+  "upstream": "https://github.com/godotengine/godot-cpp/tree/10.0.0-stable",
   "documents": [
     {
       "path": "upstream/godot-cpp/README.md",
-      "source": "https://github.com/xlings-res/godot-cpp/releases/download/10.0.0-rc1/godot-cpp-10.0.0-rc1.tar.gz/README.md",
-      "sha256": "2ba7f286922fe61b44db0873f635ad6f2a787e277b03ae6daab498f373fa15f7"
+      "source": "https://github.com/godotengine/godot-cpp/tree/10.0.0-stable/README.md",
+      "sha256": "be3baedc5a896c42a9a3f208f00302f87e87755aea566782a578ad9b21a12aea"
     },
     {
       "path": "upstream/godot-cpp/LICENSE.md",
-      "source": "https://github.com/xlings-res/godot-cpp/releases/download/10.0.0-rc1/godot-cpp-10.0.0-rc1.tar.gz/LICENSE.md",
+      "source": "https://github.com/godotengine/godot-cpp/tree/10.0.0-stable/LICENSE.md",
       "sha256": "26a5b210d90760156ce886267ce9df235787dcc6cebfd7ecd95ef5b6fdcc95bf"
     },
     {

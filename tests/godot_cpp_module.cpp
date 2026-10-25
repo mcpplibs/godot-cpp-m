@@ -54,8 +54,11 @@ int main() {
                          !Math::is_zero_approx(1.0f) &&
                          close(Math::lerp(0.0, 10.0, 0.25), 2.5);
 
+    const bool hash_ok = hash_murmur3_one_float(0.0f) == hash_murmur3_one_float(-0.0f) &&
+                         hash_murmur3_one_double(0.0) == hash_murmur3_one_double(-0.0);
+
     const bool ok = vec2_ok && vec3_ok && basis_ok && color_ok && aabb_ok &&
-                    gen_ok && tmpl_ok;
+                    gen_ok && tmpl_ok && hash_ok;
     std::println("vec2={} vec3={} basis={} color={} aabb={} gen={} tmpl={}",
                  vec2_ok, vec3_ok, basis_ok, color_ok, aabb_ok, gen_ok, tmpl_ok);
     return ok ? 0 : 1;

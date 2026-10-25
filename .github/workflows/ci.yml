@@ -59,7 +59,9 @@ jobs:
       # `git ls-files -s` reads the index, so build output can never enter the
       # hash the way a hashFiles() glob would.
       - name: Mwrap identity and bilingual README contract
-        run: python3 tools/check_mwrap_release.py
+        run: |
+          python3 tools/check_mwrap_release.py
+          python3 tools/test_gen_module_cppm.py
 
       - name: Compute registry cache key
         shell: bash
@@ -113,6 +115,26 @@ jobs:
         run: |
           "$MCPP" --version
           "$MCPP" index update
+
+      - name: Checkout candidate SDK index
+        uses: actions/checkout@v4
+        with:
+          repository: mcpplibs/mcpp-index
+          ref: feat/mwrap-opencv-onnxruntime
+          path: .candidate-index
+
+      - name: Use the unchanged complete candidate index
+        shell: bash
+        run: |
+          python3 - <<'PYTHON'
+          import importlib.util
+          from pathlib import Path
+          source = Path('.candidate-index').resolve()
+          spec = importlib.util.spec_from_file_location('candidate_index', source / 'tests/prepare_builtin_index.py')
+          module = importlib.util.module_from_spec(spec)
+          spec.loader.exec_module(module)
+          module.prepare(source, Path.home() / '.mcpp')
+          PYTHON
 
       # No explicit toolchain: mcpp picks the platform default (gcc on Linux,
       # LLVM on macOS/Windows), which is what a consumer gets and what

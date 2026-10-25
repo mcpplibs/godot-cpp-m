@@ -15,18 +15,8 @@ This repository contains the  *C++ bindings* for the [**Godot Engine**](https://
 
 ## Versioning
 
-> [!WARNING]
->
-> The master branch of godot-cpp (version 10.x) is currently in Beta. You may prefer to choose a previous version to build on top of instead:
-> - [`4.5`](https://github.com/godotengine/godot-cpp/tree/4.5)
-> - [`godot-4.5-stable`](https://github.com/godotengine/godot-cpp/tree/godot-4.5-stable)
-> - [`3.x`](https://github.com/godotengine/godot-cpp/tree/3.x)
-
-Starting with version 10.x, godot-cpp is versioned independently from Godot. The godot-cpp version you
-choose has no bearing on which Godot versions it is compatible with.
-
-Until we have a stable release branch, you can use the `master` branch, or choose any of the previous
-version branches and tags for your project.
+Starting with version 10.x, godot-cpp is versioned independently from Godot.
+Using the `api_version` parameter (see below), godot-cpp v10 can target Godot 4.3 or later.
 
 ## Compatibility
 
@@ -48,13 +38,20 @@ godot --dump-extension-api
 scons custom_api_file=extension_api.json
 ```
 
-If you don't provide `api_version` or `custom_api_file`, then, by default, godot-cpp will
-target the latest stable Godot version that it's aware of.
+Extension authors can provide a default target API version by passing it to godot-cpp's
+`SConstruct`, for example:
+
+```python
+env = SConscript("godot-cpp/SConstruct", {"api_version": "4.7"})
+```
+
+This is highly recommended! It allows the extension author to ensure that their extension
+is built with a version that provides all the necessary features by default.
 
 ## Contributing
 
 We greatly appreciate help in maintaining and extending this project. If you
-wish to help out, please visit the [godot-cpp section of the Contributing docs](https://contributing.godotengine.org/en/latest/other/godot-cpp.html).
+wish to help out, please visit the [godot-cpp section of the Contributing docs](https://contributing.godotengine.org/en/latest/development/other/godot-cpp.html).
 
 ## Getting started
 

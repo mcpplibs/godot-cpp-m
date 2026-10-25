@@ -82,7 +82,7 @@ NON_NAMES = {
 # Attribute-ish macros godot-cpp puts in front of declarations.
 DECORATORS = {
     "_ALWAYS_INLINE_", "_FORCE_INLINE_", "_NO_DISCARD_", "GDE_EXPORT",
-    "_NO_INLINE_", "_ALLOW_DISCARD_",
+    "_NO_INLINE_", "_ALLOW_DISCARD_", "_WARN_UNUSED_",
 }
 
 
@@ -107,7 +107,12 @@ def strip_noise(text: str) -> str:
             out.append("")
             continue
         out.append(line)
-    return "\n".join(out)
+    cleaned = "\n".join(out)
+    # Diagnostic pragma wrappers are standalone preprocessing invocations,
+    # not namespace declarations. Keep declarations following them intact.
+    return re.sub(
+        r'(?m)^[ \t]*GODOT_(?:(?:GCC|CLANG|MSVC)_WARNING_(?:PUSH_AND_IGNORE|IGNORE|PUSH|POP)(?:\([^\n]*\))?|(?:PUSH|POP)_IGNORE_DEPRECATION\(\))[ \t]*;?[ \t]*$',
+        '', cleaned)
 
 
 def split_template_head(head: str) -> str:
@@ -413,6 +418,13 @@ SHIM_BANNER = """\
 def write_shim(root: Path, out_path: Path) -> None:
     src = root / "include" / SHIM_REL
     text = src.read_text(encoding="utf-8")
+    # Stable 10.x moved both functions out of the header. Preserve that upstream
+    # ownership and remove the obsolete shadow instead of patching declarations.
+    functions = ("hash_murmur3_one_float", "hash_murmur3_one_double")
+    if all(re.search(r"(?m)^uint32_t " + name + r"\([^;{}]+\);$", text) for name in functions):
+        out_path.unlink(missing_ok=True)
+        sys.stderr.write(f"no shim needed: upstream defines both hash functions out of line\n")
+        return
     for old, new in SHIM_EDITS:
         if text.count(old) != 1:
             raise SystemExit(

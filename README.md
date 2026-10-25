@@ -1,6 +1,6 @@
 # godot-cpp-m
 
-> godot-cpp 10.0.0-rc1 as C++23 modules, preserving godot:: APIs.
+> godot-cpp 10.0.0 as C++23 modules, preserving godot:: APIs.
 
 **English** · [简体中文](README.zh.md) · [Upstream](https://github.com/godotengine/godot-cpp) · [Releases](https://github.com/mcpplibs/godot-cpp-m/releases) · [mcpp](https://github.com/mcpp-community/mcpp) · [Index](https://github.com/mcpplibs/mcpp-index)
 
@@ -19,24 +19,20 @@
 ## Install
 
 ```sh
-mcpp new godot_math --template mcpplibs.mwrap.godot_cpp@10.0.0-rc1
+mcpp new godot_math --template mcpplibs.mwrap.godot_cpp@10.0.0
 cd godot_math
 mcpp run
 ```
 
 ```toml
 [dependencies]
-mcpplibs.mwrap.godot_cpp = "10.0.0-rc1"
+mcpplibs.mwrap.godot_cpp = "10.0.0"
 ```
 
 ## Macros
 
 Use `.macros` for version mappings. For GDCLASS, D_METHOD and memory/control macros, include
 `<mwrap/godot_cpp/macros.hpp>` before `import mcpplibs.mwrap.godot_cpp;`.
-
-## The hashfuncs shim
-
-A generated linkage adapter keeps upstream template bodies usable by named modules. [Details](docs/usage.md)
 
 ## Example
 
@@ -54,7 +50,7 @@ Use `tools/gen_module_cppm.py` with the exact compat.godot-cpp source and genera
 ## Tests
 
 `mcpp test` covers module/math and textual macros; CI also builds the extension on Linux/macOS/Windows.
-This is a prerelease binding, not certification of engine loading.
+Uses the upstream-default Godot 4.7 API; engine loading requires a matching runtime.
 
 ## License
 
