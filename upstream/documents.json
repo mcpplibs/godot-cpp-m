@@ -1,0 +1,20 @@
+{
+  "upstream": "https://github.com/godotengine/godot-cpp/tree/10.0.0-stable",
+  "documents": [
+    {
+      "path": "upstream/godot-cpp/README.md",
+      "source": "https://github.com/godotengine/godot-cpp/tree/10.0.0-stable/README.md",
+      "sha256": "be3baedc5a896c42a9a3f208f00302f87e87755aea566782a578ad9b21a12aea"
+    },
+    {
+      "path": "upstream/godot-cpp/LICENSE.md",
+      "source": "https://github.com/godotengine/godot-cpp/tree/10.0.0-stable/LICENSE.md",
+      "sha256": "26a5b210d90760156ce886267ce9df235787dcc6cebfd7ecd95ef5b6fdcc95bf"
+    },
+    {
+      "path": "upstream/wrapper-legacy/LICENSE",
+      "source": "Previous wrapper LICENSE, retained copyright and permission notice",
+      "sha256": "02bfee1a9607e16b7ac6b178593d42ff142376c6de0e5340057f6223926e5f67"
+    }
+  ]
+}

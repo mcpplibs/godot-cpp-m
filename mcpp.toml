@@ -2,9 +2,10 @@
 [package]
 namespace = "mcpplibs.mwrap"
 name = "godot_cpp"
-version = "10.0.0-rc1"
+version = "10.0.0"
 description = "godot-cpp as a C++23 module (import mcpplibs.mwrap.godot_cpp;) on top of the compat.godot-cpp source build"
-license     = "MIT"
+license = "Apache-2.0"
+authors = ["mcpp-community"]
 repo        = "https://github.com/mcpplibs/godot-cpp-m"
 platforms   = ["linux", "macos", "windows"]
 
@@ -29,7 +30,30 @@ cxxflags = ["-Wno-expose-global-module-tu-local"]
 
 [dependencies]
 # Upstream tree + pre-generated bindings + the whole source build recipe.
-compat.godot-cpp = "10.0.0-rc1"
+compat.godot-cpp = "10.0.0"
 
 [package.metadata.mwrap]
-upstream-version = "10.0.0-rc1"
+wrapper-revision = 0
+upstream-version = "10.0.0"
+upstream-tag = "10.0.0-stable"
+engine-api = "4.7"
+
+[[runtime.deploy]]
+from = "LICENSE"
+to = "licenses/godot_cpp"
+
+[[runtime.deploy]]
+from = "NOTICE"
+to = "licenses/godot_cpp"
+
+[[runtime.deploy]]
+from = "upstream/godot-cpp/README.md"
+to = "licenses/godot_cpp/upstream/godot-cpp"
+
+[[runtime.deploy]]
+from = "upstream/godot-cpp/LICENSE.md"
+to = "licenses/godot_cpp/upstream/godot-cpp"
+
+[[runtime.deploy]]
+from = "upstream/wrapper-legacy/LICENSE"
+to = "licenses/godot_cpp/upstream/wrapper-legacy"

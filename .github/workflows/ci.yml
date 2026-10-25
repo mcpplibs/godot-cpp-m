@@ -54,12 +54,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Holds the toolchains AND the built compat.godot-cpp (1022 TUs), so a
+      # Holds the toolchains AND the built compat.godot-cpp (1089 TUs), so a
       # repeat run rebuilds little. Keyed off the tracked inputs only --
       # `git ls-files -s` reads the index, so build output can never enter the
       # hash the way a hashFiles() glob would.
       - name: Mwrap identity and bilingual README contract
-        run: python3 tools/check_mwrap_release.py
+        run: |
+          python3 tools/check_mwrap_release.py
+          python3 tools/test_gen_module_cppm.py
 
       - name: Compute registry cache key
         shell: bash
@@ -114,10 +116,33 @@ jobs:
           "$MCPP" --version
           "$MCPP" index update
 
+      - name: Checkout candidate SDK index
+        uses: actions/checkout@v4
+        with:
+          repository: mcpplibs/mcpp-index
+          ref: feat/mwrap-opencv-onnxruntime
+          path: .candidate-index
+
+      - name: Route the unpublished SDK through the candidate compat view
+        shell: bash
+        run: |
+          python3 - <<'PYTHON'
+          import json
+          from pathlib import Path
+          import subprocess
+          import sys
+          source = Path('.candidate-index').resolve()
+          subprocess.run([sys.executable, str(source / 'tests/prepare_mwrap_indices.py')], check=True)
+          view = source / 'tests/mwrap/.indices/compat'
+          for manifest in (Path('mcpp.toml'), Path('examples/summator/mcpp.toml')):
+              with manifest.open('a', encoding='utf-8') as output:
+                  output.write('\n[indices.compat]\npath = ' + json.dumps(view.as_posix()) + '\n')
+          PYTHON
+
       # No explicit toolchain: mcpp picks the platform default (gcc on Linux,
       # LLVM on macOS/Windows), which is what a consumer gets and what
       # mcpp-index CI exercises.
-      # Cold: compat.godot-cpp builds 1022 TUs from source underneath this.
+      # Cold: compat.godot-cpp builds 1089 TUs from source underneath this.
       - name: Build the module layer
         shell: bash
         env:
@@ -136,7 +161,7 @@ jobs:
         shell: bash
         env:
           MCPP_INDEX_MIRROR: GLOBAL
-        run: python3 tools/test_template.py --mcpp "$MCPP" --toolchain "${{ matrix.toolchain }}"
+        run: python3 tools/test_template.py --mcpp "$MCPP" --toolchain "${{ matrix.toolchain }}" --index .candidate-index
 
       # Verify the native shared-library shape on every supported platform.
       # Loading this library still requires a matching Godot process.

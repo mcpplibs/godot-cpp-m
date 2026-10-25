@@ -1,0 +1,11 @@
+godot-cpp-m: C++ module wrapper
+Copyright (c) 2026 mcpp-community contributors
+
+The wrapper contributions are licensed under the Apache License, Version 2.0.
+Upstream code, copied interfaces, generated bindings and dependencies retain
+their original licenses and copyright notices. Original upstream README and
+license documents are retained in upstream/godot-cpp/; provenance and checksums
+are recorded in upstream/documents.json.
+
+The inherited wrapper permission and copyright notice is retained in
+upstream/wrapper-legacy/LICENSE.
