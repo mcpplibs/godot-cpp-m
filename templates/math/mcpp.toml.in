@@ -3,4 +3,4 @@ name = "{{project.name}}"
 version = "0.1.0"
 
 [dependencies]
-"{{self.name}}" = "{{self.version}}"
+{{self.name}} = "{{self.version}}"
