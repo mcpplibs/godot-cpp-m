@@ -30,7 +30,7 @@ int main() {
 
 ```toml
 [dependencies]
-"mcpplibs.mwrap.godot_cpp" = "10.0.0"   # Upstream-default Godot 4.7 API
+mcpplibs.mwrap.godot_cpp = "10.0.0.1"   # Upstream-default Godot 4.7 API
 ```
 
 The version tracks upstream godot-cpp. A numeric wrapper revision may follow
@@ -40,6 +40,7 @@ The historical upstream mapping is:
 | package version | upstream tag | engine |
 |---|---|---|
 | `10.0.0` | `10.0.0-stable` | Godot 4.7 (upstream-default API) |
+| `10.0.0.1` | `10.0.0-stable` | Godot 4.7 (upstream-default API) |
 
 ## Macros
 

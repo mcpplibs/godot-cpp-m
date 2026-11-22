@@ -19,14 +19,14 @@
 ## 安装
 
 ```sh
-mcpp new godot_math --template mcpplibs.mwrap.godot_cpp@10.0.0
+mcpp new godot_math --template mcpplibs.mwrap.godot_cpp@10.0.0.1
 cd godot_math
 mcpp run
 ```
 
 ```toml
 [dependencies]
-mcpplibs.mwrap.godot_cpp = "10.0.0"
+mcpplibs.mwrap.godot_cpp = "10.0.0.1"
 ```
 
 ## 宏
